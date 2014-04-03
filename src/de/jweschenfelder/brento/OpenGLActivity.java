@@ -12,6 +12,7 @@ import com.threed.jpct.Light;
 import com.threed.jpct.Loader;
 import com.threed.jpct.Logger;
 import com.threed.jpct.Object3D;
+import com.threed.jpct.Primitives;
 import com.threed.jpct.RGBColor;
 import com.threed.jpct.SimpleVector;
 import com.threed.jpct.World;
@@ -25,7 +26,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 public class OpenGLActivity extends Activity {
 
@@ -67,8 +69,18 @@ public class OpenGLActivity extends Activity {
 	private boolean shaking = false;
 	private boolean nodding = false;
 	private boolean stopping = false;
+	private boolean lighton = false;
 	
-	private Light sun = null;
+	private Light sun1 = null;
+	private Object3D lamp1 = null;
+	private Light sun2 = null;
+	private Object3D lamp2 = null;
+	private Light sun3 = null;
+	private Object3D lamp3 = null;
+	private Light sun4 = null;
+	private Object3D lamp4 = null;
+	private Light sun5 = null;
+	private Object3D lamp5 = null;
 	private Camera cam = null;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +113,13 @@ public class OpenGLActivity extends Activity {
 		mGLView.setRenderer(renderer);
 		setContentView(mGLView);
 		
-		LinearLayout ll = new LinearLayout(this);
-		ll.setOrientation(LinearLayout.VERTICAL);
+		TableLayout tbl = new TableLayout(this);
+		tbl.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+		TableRow tr1 = new TableRow(this);
+		TableRow tr2 = new TableRow(this);
+		TableRow tr3 = new TableRow(this);
+		TableRow tr4 = new TableRow(this);
+		tr1.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 		Button b1 = new Button(this);
 		b1.setText("Walk");
 		b1.setOnClickListener(new View.OnClickListener() {
@@ -169,7 +186,7 @@ public class OpenGLActivity extends Activity {
 		    }
 		});
 		Button b6 = new Button(this);
-		b6.setText("Stopp");
+		b6.setText("Stop");
 		b6.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
@@ -182,22 +199,36 @@ public class OpenGLActivity extends Activity {
 		    }
 		});
 		Button b7 = new Button(this);
-		b7.setText("Quit");
+		b7.setText("Light");
 		b7.setOnClickListener(new View.OnClickListener() {
+		    public void onClick(View v) {
+		    	firstStart = true;
+		    	lighton = (lighton) ? false : true;
+		    }
+		});
+		Button b8 = new Button(this);
+		b8.setText("Quit");
+		b8.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	//Quit - ToDo
 		    	finish();
 		    }
 		});
-		ll.addView(b1);
-		ll.addView(b2);
-		ll.addView(b3);
-		ll.addView(b4);
-		ll.addView(b5);
-		ll.addView(b6);
-		ll.addView(b7);
-		ll.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		addContentView(ll, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+		tr1.addView(b1);
+		tr1.addView(b2);
+		tr2.addView(b3);
+		tr2.addView(b4);
+		tr3.addView(b5);
+		tr3.addView(b6);
+		tr4.addView(b7);
+		tr4.addView(b8);
+		tr4.setPadding(0, 15, 0, 0);
+		tbl.addView(tr1);
+		tbl.addView(tr2);
+		tbl.addView(tr3);
+		tbl.addView(tr4);
+		tbl.setGravity(Gravity.TOP | Gravity.LEFT);
+		addContentView(tbl, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 	}
 
 	@Override
@@ -293,8 +324,16 @@ public class OpenGLActivity extends Activity {
 				world = new World();
 				world.setAmbientLight(20, 20, 20);
  
-				sun = new Light(world);
-				sun.setIntensity(250, 250, 250);
+				sun1 = new Light(world);
+				sun1.setIntensity(255, 255, 255);
+				sun2 = new Light(world);
+				sun2.setIntensity(255, 255, 255);
+				sun3 = new Light(world);
+				sun3.setIntensity(255, 255, 255);
+				sun4 = new Light(world);
+				sun4.setIntensity(255, 255, 255);
+				sun5 = new Light(world);
+				sun5.setIntensity(255, 255, 255);
 
 				InputStream ser = getResources().openRawResource(R.raw.sbrent);
 				scale = 5.0f;
@@ -347,6 +386,32 @@ public class OpenGLActivity extends Activity {
 				world.addObject(brentLeftFoot);
 				world.addObject(brentRightFoot);
 				
+				lamp1 = Primitives.getSphere(1f);
+				lamp1.setAdditionalColor(255, 255, 255);
+				lamp1.strip();
+				lamp1.build();
+				lamp2 = Primitives.getSphere(1f);
+				lamp2.setAdditionalColor(255, 255, 255);
+				lamp2.strip();
+				lamp2.build();
+				lamp3 = Primitives.getSphere(1f);
+				lamp3.setAdditionalColor(255, 255, 255);
+				lamp3.strip();
+				lamp3.build();
+				lamp4 = Primitives.getSphere(1f);
+				lamp4.setAdditionalColor(255, 255, 255);
+				lamp4.strip();
+				lamp4.build();
+				lamp5 = Primitives.getSphere(1f);
+				lamp5.setAdditionalColor(255, 255, 255);
+				lamp5.strip();
+				lamp5.build();
+				world.addObject(lamp1);
+				world.addObject(lamp2);
+				world.addObject(lamp3);
+				world.addObject(lamp4);
+				world.addObject(lamp5);
+				
 				init();
 				init();
 				
@@ -355,11 +420,51 @@ public class OpenGLActivity extends Activity {
 				cam.rotateCameraX((float) Math.toRadians(270));
 				cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
 
-				SimpleVector sv = new SimpleVector();
-				sv.set(brentHead.getTransformedCenter());
-				sv.y += 100;
-				sv.z -= 100;
-				sun.setPosition(sv);
+				SimpleVector sv1 = new SimpleVector();
+				sv1.set(brentHead.getTransformedCenter());
+				sv1.x = 0;
+				sv1.y += 50;
+				sv1.z -= 20;
+				sun1.setPosition(sv1);
+				lamp1.translate(sv1);
+				SimpleVector sv2 = new SimpleVector();
+				sv2.set(brentHead.getTransformedCenter());
+				sv2.x = 0;
+				sv2.y -= 50;
+				sv2.z -= 20;
+				sun2.setPosition(sv2);
+				lamp2.translate(sv2);
+				SimpleVector sv3 = new SimpleVector();
+				sv3.set(brentHead.getTransformedCenter());
+				sv3.x -= 50;
+				sv3.y = 0;
+				sv3.z -= 20;
+				sun3.setPosition(sv3);
+				lamp3.translate(sv3);
+				SimpleVector sv4 = new SimpleVector();
+				sv4.set(brentHead.getTransformedCenter());
+				sv4.x += 50;
+				sv4.y = 0;
+				sv4.z -= 20;
+				sun4.setPosition(sv4);
+				lamp4.translate(sv4);
+				SimpleVector sv5 = new SimpleVector();
+				sv5.set(brentHead.getTransformedCenter());
+				sv5.x = 0;
+				sv5.y = 0;
+				sv5.z += 50;
+				sun5.setPosition(sv5);
+				lamp5.translate(sv5);
+				
+				sun2.disable();
+				sun3.disable();
+				sun4.disable();
+				sun5.disable();
+				lamp2.setVisibility(false);
+				lamp3.setVisibility(false);
+				lamp4.setVisibility(false);
+				lamp5.setVisibility(false);
+
 				MemoryHelper.compact();
 
 				if (master == null) {
@@ -370,33 +475,33 @@ public class OpenGLActivity extends Activity {
 		}
 
 		public void init() {
-			brentRightFoot.clearTranslation();
-			brentLeftFoot.clearTranslation();
+			brentBody.clearTranslation();
+			brentHead.clearTranslation();
 			brentLeftHand.clearTranslation();
 			brentRightHand.clearTranslation();
-			brentHead.clearTranslation();
-			brentBody.clearTranslation();
-			brentRightFoot.clearRotation();
-			brentLeftFoot.clearRotation();
+			brentLeftFoot.clearTranslation();
+			brentRightFoot.clearTranslation();
+			brentBody.clearRotation();
+			brentHead.clearRotation();
 			brentLeftHand.clearRotation();
 			brentRightHand.clearRotation();
-			brentHead.clearRotation();
-			brentBody.clearRotation();
-			brentRightFoot.setScale(scale);
-			brentLeftFoot.setScale(scale);
+			brentLeftFoot.clearRotation();
+			brentRightFoot.clearRotation();
+			brentBody.setScale(scale);
+			brentHead.setScale(scale);
 			brentLeftHand.setScale(scale);
 			brentRightHand.setScale(scale);
-			brentHead.setScale(scale);
-			brentBody.setScale(scale);
+			brentLeftFoot.setScale(scale);
+			brentRightFoot.setScale(scale);
 			
 			SimpleVector ce1 = new SimpleVector(0f, 0f, (2.7f * -scale));
 			SimpleVector pi1 = new SimpleVector(0f, 0f, 0f);
 			SimpleVector ce2 = new SimpleVector(0f, 0f, 0f);
 			SimpleVector pi2 = new SimpleVector(0f, 0f, (-scale/2 + 0.5f));
-			brentHead.setOrigin(ce1);
-			brentHead.setRotationPivot(pi1); 
 			brentBody.setOrigin(ce1);
 			brentBody.setRotationPivot(pi1);
+			brentHead.setOrigin(ce1);
+			brentHead.setRotationPivot(pi1); 
 			brentLeftHand.setOrigin(ce1);
 			brentLeftHand.setRotationPivot(pi1);
 			brentRightHand.setOrigin(ce1);
@@ -478,8 +583,8 @@ public class OpenGLActivity extends Activity {
 						float x = 0f; 
 						float y = 0f; 
 						float z = 0.5f; 
-						brentHead.translate(x, y, z);
 						brentBody.translate(x, y, z);
+						brentHead.translate(x, y, z);
 						brentLeftHand.translate(x, y, z);
 						brentRightHand.translate(x, y, z);
 						brentLeftFoot.translate(x, y, z);
@@ -494,8 +599,8 @@ public class OpenGLActivity extends Activity {
 						float x = 0f; 
 						float y = 0f; 
 						float z = -0.5f; 
-						brentHead.translate(x, y, z);
 						brentBody.translate(x, y, z);
+						brentHead.translate(x, y, z);
 						brentLeftHand.translate(x, y, z);
 						brentRightHand.translate(x, y, z);
 						brentLeftFoot.translate(x, y, z);
@@ -626,6 +731,36 @@ public class OpenGLActivity extends Activity {
 				if (firstStart) {
 					init();
 					init();
+					firstStart = false;
+				}
+			}
+			if (lighton) {
+				if (firstStart) {
+					init();
+					init();
+					sun2.enable();
+					sun3.enable();
+					sun4.enable();
+					sun5.enable();
+					lamp2.setVisibility(true);
+					lamp3.setVisibility(true);
+					lamp4.setVisibility(true);
+					lamp5.setVisibility(true);
+					firstStart = false;
+				}
+			}
+			else if (!lighton) {
+				if (firstStart) {
+					init();
+					init();
+					sun2.disable();
+					sun3.disable();
+					sun4.disable();
+					sun5.disable();
+					lamp2.setVisibility(false);
+					lamp3.setVisibility(false);
+					lamp4.setVisibility(false);
+					lamp5.setVisibility(false);
 					firstStart = false;
 				}
 			}
