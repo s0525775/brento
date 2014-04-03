@@ -63,12 +63,15 @@ public class OpenGLActivity extends Activity {
 	private int fps = 0;
 	
 	private boolean firstStart = true;
-	private boolean walking = false;
-	private boolean jumping = false;
-	private boolean waving = false;
-	private boolean shaking = false;
-	private boolean nodding = false;
-	private boolean stopping = false;
+	private final static int NOTHING = 0;
+	private final static int WALKING = 1;
+	private final static int JUMPING = 2;
+	private final static int WAVING = 3;
+	private final static int SHAKING = 4;
+	private final static int NODDING = 5;
+	private final static int STOPPING = 6;
+	private int curAction = NOTHING;
+	private int newAction = NOTHING;
 	
 	private Light sun = null;
 	private Object3D lamp = null;
@@ -116,12 +119,10 @@ public class OpenGLActivity extends Activity {
 		b1.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
-		    	walking = true;
-		    	jumping = false;
-		    	waving = false;
-		    	shaking = false;
-		    	nodding = false;
-		    	stopping = false;
+		    	newAction = WALKING;
+		    	if (curAction == NOTHING) {
+		    		curAction = newAction;
+		    	}
 		    }
 		});
 		Button b2 = new Button(this);
@@ -129,12 +130,10 @@ public class OpenGLActivity extends Activity {
 		b2.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
-		    	walking = false;
-		    	jumping = true;
-		    	waving = false;
-		    	shaking = false;
-		    	nodding = false;
-		    	stopping = false;
+		    	newAction = JUMPING;
+		    	if (curAction == NOTHING) {
+		    		curAction = newAction;
+		    	}
 		    }
 		});
 		Button b3 = new Button(this);
@@ -142,12 +141,10 @@ public class OpenGLActivity extends Activity {
 		b3.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
-		    	walking = false;
-		    	jumping = false;
-		    	waving = true;
-		    	shaking = false;
-		    	nodding = false;
-		    	stopping = false;
+		    	newAction = WAVING;
+		    	if (curAction == NOTHING) {
+		    		curAction = newAction;
+		    	}
 		    }
 		});
 		Button b4 = new Button(this);
@@ -155,12 +152,10 @@ public class OpenGLActivity extends Activity {
 		b4.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
-		    	walking = false;
-		    	jumping = false;
-		    	waving = false;
-		    	shaking = true;
-		    	nodding = false;
-		    	stopping = false;
+		    	newAction = SHAKING;
+		    	if (curAction == NOTHING) {
+		    		curAction = newAction;
+		    	}
 		    }
 		});
 		Button b5 = new Button(this);
@@ -168,12 +163,10 @@ public class OpenGLActivity extends Activity {
 		b5.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
-		    	walking = false;
-		    	jumping = false;
-		    	waving = false;
-		    	shaking = false;
-		    	nodding = true;
-		    	stopping = false;
+		    	newAction = NODDING;
+		    	if (curAction == NOTHING) {
+		    		curAction = newAction;
+		    	}
 		    }
 		});
 		Button b6 = new Button(this);
@@ -181,12 +174,10 @@ public class OpenGLActivity extends Activity {
 		b6.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	firstStart = true;
-		    	walking = false;
-		    	jumping = false;
-		    	waving = false;
-		    	shaking = false;
-		    	nodding = false;
-		    	stopping = true;
+		    	newAction = STOPPING;
+		    	if (curAction == NOTHING) {
+		    		curAction = newAction;
+		    	}
 		    }
 		});
 		Button b7 = new Button(this);
@@ -436,23 +427,37 @@ public class OpenGLActivity extends Activity {
 		}
 
 		public void onDrawFrame(GL10 gl) {
-			if (walking) {
-				walking();
-			}
-			else if (jumping) {
-				jumping();
-			}
-			else if (waving) {
-				waving();
-			}
-			else if (shaking) {
-				shaking();
-			}
-			else if (nodding) {
-				nodding();
-			}
-			else if (stopping) {
-				stopping();
+			switch (curAction) {
+				case NOTHING: { 
+					break;
+				}
+				case WALKING: { 
+					walking();
+					break;
+				}
+				case JUMPING: { 
+					jumping();
+					break;
+				}
+				case WAVING: { 
+					waving();
+					break;
+				}
+				case SHAKING: { 
+					shaking();
+					break;
+				}
+				case NODDING: { 
+					nodding();
+					break;
+				}
+				case STOPPING: { 
+					stopping();
+					break;
+				}
+				default: { 
+					break;
+				}
 			}
 			
 			if (touchTurn != 0) {
@@ -485,11 +490,11 @@ public class OpenGLActivity extends Activity {
 		private synchronized void walking() {
 			if (firstStart) {
 				init();
-				init();
 				brentLeftHand.rotateZ((float) Math.toRadians(30));
 				brentRightHand.rotateZ((float) Math.toRadians(30));
 				brentLeftFoot.rotateX((float) Math.toRadians(30));
 				brentRightFoot.rotateX((float) Math.toRadians(-30));
+				curAction = WALKING;
 				firstStart = false;
 			}
 			if (ffInd < ffMax/2) {
@@ -516,12 +521,19 @@ public class OpenGLActivity extends Activity {
 			}
 			else {
 				ffInd = 0;
+				if (curAction != newAction) {
+					brentLeftHand.rotateZ((float) Math.toRadians(-30));
+					brentRightHand.rotateZ((float) Math.toRadians(-30));
+					brentLeftFoot.rotateX((float) Math.toRadians(-30));
+					brentRightFoot.rotateX((float) Math.toRadians(30));
+					init();
+					curAction = newAction;
+				}
 			} 
 		}
 
 		private synchronized void jumping() {
 			if (firstStart) {
-				init();
 				init();
 				SimpleVector ce = new SimpleVector(0f, 0f, (2.7f * -scale + 1.5f));
 				SimpleVector pi = new SimpleVector(0f, 0f, 0f);
@@ -529,6 +541,7 @@ public class OpenGLActivity extends Activity {
 				brentLeftFoot.setRotationPivot(pi);
 				brentRightFoot.setOrigin(ce);
 				brentRightFoot.setRotationPivot(pi);
+				curAction = JUMPING;
 				firstStart = false;
 			}
 			if (ffInd < 11) {
@@ -585,6 +598,16 @@ public class OpenGLActivity extends Activity {
 				try {
 					Thread.sleep((long) 500);
 					ffInd = 0;
+					if (curAction != newAction) {
+						SimpleVector ce = new SimpleVector(0f, 0f, 0f);
+						SimpleVector pi = new SimpleVector(0f, 0f, (-scale/2 + 0.5f));
+						brentLeftFoot.setOrigin(ce);
+						brentLeftFoot.setRotationPivot(pi);
+						brentRightFoot.setOrigin(ce);
+						brentRightFoot.setRotationPivot(pi);
+						init();
+						curAction = newAction;
+					}
 				} catch (InterruptedException e) {
 				}
 			} 
@@ -593,12 +616,12 @@ public class OpenGLActivity extends Activity {
 		private synchronized void waving() {
 			if (firstStart) {
 				init();
-				init();
 				SimpleVector ce = new SimpleVector(0f, 0f, -1f);
 				SimpleVector pi = new SimpleVector(0f, 0f, (-scale/3 + 2.7f));
 				brentLeftHand.setOrigin(ce);
 				brentLeftHand.setRotationPivot(pi);
 				brentLeftHand.rotateY((float) Math.toRadians(-90));
+				curAction = WAVING;
 				firstStart = false;
 			}
 			if (ffInd < ffMax/2) {
@@ -621,6 +644,15 @@ public class OpenGLActivity extends Activity {
 				try {
 					Thread.sleep((long) 30);
 					ffInd = 0;
+					if (curAction != newAction) {
+						SimpleVector ce = new SimpleVector(0f, 0f, (2.7f * -scale));
+						SimpleVector pi = new SimpleVector(0f, 0f, 0f);
+						brentLeftHand.setOrigin(ce);
+						brentLeftHand.setRotationPivot(pi);
+						brentLeftHand.rotateY((float) Math.toRadians(90));
+						init();
+						curAction = newAction;
+					}
 				} catch (InterruptedException e) {
 				}
 			} 
@@ -629,8 +661,8 @@ public class OpenGLActivity extends Activity {
 		private synchronized void shaking() {
 			if (firstStart) {
 				init();
-				init();
 				brentHead.rotateZ((float) Math.toRadians(-12));
+				curAction = SHAKING;
 				firstStart = false;
 			}
 			if (ffInd < ffMax/2) {
@@ -653,6 +685,11 @@ public class OpenGLActivity extends Activity {
 				try {
 					Thread.sleep((long) 30);
 					ffInd = 0;
+					if (curAction != newAction) {
+						brentHead.rotateZ((float) Math.toRadians(12));
+						init();
+						curAction = newAction;
+					}
 				} catch (InterruptedException e) {
 				}
 			} 
@@ -661,12 +698,12 @@ public class OpenGLActivity extends Activity {
 		private synchronized void nodding() {
 			if (firstStart) {
 				init();
-				init();
 				SimpleVector ce = new SimpleVector(0f, 0f, 0f);
 				SimpleVector pi = new SimpleVector(0f, 0f, (2.7f + 1.4f/2));
 				brentHead.setOrigin(ce);
 				brentHead.setRotationPivot(pi);
 				brentHead.rotateX((float) Math.toRadians(-12));
+				curAction = NODDING;
 				firstStart = false;
 			}
 			if (ffInd < ffMax/2) {
@@ -689,6 +726,15 @@ public class OpenGLActivity extends Activity {
 				try {
 					Thread.sleep((long) 30);
 					ffInd = 0;
+					if (curAction != newAction) {
+						SimpleVector ce = new SimpleVector(0f, 0f, (2.7f * -scale));
+						SimpleVector pi = new SimpleVector(0f, 0f, 0f);
+						brentHead.setOrigin(ce);
+						brentHead.setRotationPivot(pi);
+						brentHead.rotateX((float) Math.toRadians(12));
+						init();
+						curAction = newAction;
+					}
 				} catch (InterruptedException e) {
 				}
 			} 
@@ -697,7 +743,7 @@ public class OpenGLActivity extends Activity {
 		private synchronized void stopping() {
 			if (firstStart) {
 				init();
-				init();
+				curAction = NOTHING;
 				firstStart = false;
 			}
 		}
