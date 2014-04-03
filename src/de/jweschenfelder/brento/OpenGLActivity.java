@@ -69,18 +69,9 @@ public class OpenGLActivity extends Activity {
 	private boolean shaking = false;
 	private boolean nodding = false;
 	private boolean stopping = false;
-	private boolean lighton = false;
 	
-	private Light sun1 = null;
-	private Object3D lamp1 = null;
-	private Light sun2 = null;
-	private Object3D lamp2 = null;
-	private Light sun3 = null;
-	private Object3D lamp3 = null;
-	private Light sun4 = null;
-	private Object3D lamp4 = null;
-	private Light sun5 = null;
-	private Object3D lamp5 = null;
+	private Light sun = null;
+	private Object3D lamp = null;
 	private Camera cam = null;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -199,16 +190,8 @@ public class OpenGLActivity extends Activity {
 		    }
 		});
 		Button b7 = new Button(this);
-		b7.setText("Light");
+		b7.setText("Quit");
 		b7.setOnClickListener(new View.OnClickListener() {
-		    public void onClick(View v) {
-		    	firstStart = true;
-		    	lighton = (lighton) ? false : true;
-		    }
-		});
-		Button b8 = new Button(this);
-		b8.setText("Quit");
-		b8.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {
 		    	//Quit - ToDo
 		    	finish();
@@ -221,7 +204,6 @@ public class OpenGLActivity extends Activity {
 		tr3.addView(b5);
 		tr3.addView(b6);
 		tr4.addView(b7);
-		tr4.addView(b8);
 		tr4.setPadding(0, 15, 0, 0);
 		tbl.addView(tr1);
 		tbl.addView(tr2);
@@ -324,16 +306,8 @@ public class OpenGLActivity extends Activity {
 				world = new World();
 				world.setAmbientLight(20, 20, 20);
  
-				sun1 = new Light(world);
-				sun1.setIntensity(255, 255, 255);
-				sun2 = new Light(world);
-				sun2.setIntensity(255, 255, 255);
-				sun3 = new Light(world);
-				sun3.setIntensity(255, 255, 255);
-				sun4 = new Light(world);
-				sun4.setIntensity(255, 255, 255);
-				sun5 = new Light(world);
-				sun5.setIntensity(255, 255, 255);
+				sun = new Light(world);
+				sun.setIntensity(255, 255, 255);
 
 				InputStream ser = getResources().openRawResource(R.raw.sbrent);
 				scale = 5.0f;
@@ -386,31 +360,11 @@ public class OpenGLActivity extends Activity {
 				world.addObject(brentLeftFoot);
 				world.addObject(brentRightFoot);
 				
-				lamp1 = Primitives.getSphere(1f);
-				lamp1.setAdditionalColor(255, 255, 255);
-				lamp1.strip();
-				lamp1.build();
-				lamp2 = Primitives.getSphere(1f);
-				lamp2.setAdditionalColor(255, 255, 255);
-				lamp2.strip();
-				lamp2.build();
-				lamp3 = Primitives.getSphere(1f);
-				lamp3.setAdditionalColor(255, 255, 255);
-				lamp3.strip();
-				lamp3.build();
-				lamp4 = Primitives.getSphere(1f);
-				lamp4.setAdditionalColor(255, 255, 255);
-				lamp4.strip();
-				lamp4.build();
-				lamp5 = Primitives.getSphere(1f);
-				lamp5.setAdditionalColor(255, 255, 255);
-				lamp5.strip();
-				lamp5.build();
-				world.addObject(lamp1);
-				world.addObject(lamp2);
-				world.addObject(lamp3);
-				world.addObject(lamp4);
-				world.addObject(lamp5);
+				lamp = Primitives.getSphere(1f);
+				lamp.setAdditionalColor(255, 255, 255);
+				lamp.strip();
+				lamp.build();
+				world.addObject(lamp);
 				
 				init();
 				init();
@@ -420,51 +374,14 @@ public class OpenGLActivity extends Activity {
 				cam.rotateCameraX((float) Math.toRadians(270));
 				cam.moveCamera(Camera.CAMERA_MOVEOUT, 50);
 
-				SimpleVector sv1 = new SimpleVector();
-				sv1.set(brentHead.getTransformedCenter());
-				sv1.x = 0;
-				sv1.y += 50;
-				sv1.z -= 20;
-				sun1.setPosition(sv1);
-				lamp1.translate(sv1);
-				SimpleVector sv2 = new SimpleVector();
-				sv2.set(brentHead.getTransformedCenter());
-				sv2.x = 0;
-				sv2.y -= 50;
-				sv2.z -= 20;
-				sun2.setPosition(sv2);
-				lamp2.translate(sv2);
-				SimpleVector sv3 = new SimpleVector();
-				sv3.set(brentHead.getTransformedCenter());
-				sv3.x -= 50;
-				sv3.y = 0;
-				sv3.z -= 20;
-				sun3.setPosition(sv3);
-				lamp3.translate(sv3);
-				SimpleVector sv4 = new SimpleVector();
-				sv4.set(brentHead.getTransformedCenter());
-				sv4.x += 50;
-				sv4.y = 0;
-				sv4.z -= 20;
-				sun4.setPosition(sv4);
-				lamp4.translate(sv4);
-				SimpleVector sv5 = new SimpleVector();
-				sv5.set(brentHead.getTransformedCenter());
-				sv5.x = 0;
-				sv5.y = 0;
-				sv5.z += 50;
-				sun5.setPosition(sv5);
-				lamp5.translate(sv5);
+				SimpleVector sv = new SimpleVector();
+				sv.set(brentHead.getTransformedCenter());
+				sv.x = 0;
+				sv.y += 50;
+				sv.z -= 20;
+				sun.setPosition(sv);
+				lamp.translate(sv);
 				
-				sun2.disable();
-				sun3.disable();
-				sun4.disable();
-				sun5.disable();
-				lamp2.setVisibility(false);
-				lamp3.setVisibility(false);
-				lamp4.setVisibility(false);
-				lamp5.setVisibility(false);
-
 				MemoryHelper.compact();
 
 				if (master == null) {
@@ -519,250 +436,23 @@ public class OpenGLActivity extends Activity {
 		}
 
 		public void onDrawFrame(GL10 gl) {
-			
 			if (walking) {
-				if (firstStart) {
-					init();
-					init();
-					brentLeftHand.rotateZ((float) Math.toRadians(30));
-					brentRightHand.rotateZ((float) Math.toRadians(30));
-					brentLeftFoot.rotateX((float) Math.toRadians(30));
-					brentRightFoot.rotateX((float) Math.toRadians(-30));
-					firstStart = false;
-				}
-				if (ffInd < ffMax/2) {
-					try {
-						Thread.sleep((long) 30);
-						brentLeftHand.rotateZ((float) Math.toRadians(-5));
-						brentRightHand.rotateZ((float) Math.toRadians(-5));
-						brentLeftFoot.rotateX((float) Math.toRadians(-5));
-						brentRightFoot.rotateX((float) Math.toRadians(5));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
-					try {
-						Thread.sleep((long) 30);
-						brentLeftHand.rotateZ((float) Math.toRadians(5));
-						brentRightHand.rotateZ((float) Math.toRadians(5));
-						brentLeftFoot.rotateX((float) Math.toRadians(5));
-						brentRightFoot.rotateX((float) Math.toRadians(-5));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else {
-					ffInd = 0;
-				} 
+				walking();
 			}
 			else if (jumping) {
-				if (firstStart) {
-					init();
-					init();
-					SimpleVector ce = new SimpleVector(0f, 0f, (2.7f * -scale + 1.5f));
-					SimpleVector pi = new SimpleVector(0f, 0f, 0f);
-					brentLeftFoot.setOrigin(ce);
-					brentLeftFoot.setRotationPivot(pi);
-					brentRightFoot.setOrigin(ce);
-					brentRightFoot.setRotationPivot(pi);
-					firstStart = false;
-				}
-				if (ffInd < 11) {
-					try {
-						Thread.sleep((long) 15);
-						brentLeftFoot.rotateX((float) Math.toRadians(5));
-						brentRightFoot.rotateX((float) Math.toRadians(5));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= 11) && (ffInd < ffMax/2)) {
-					try {
-						Thread.sleep((long) 15);
-						float x = 0f; 
-						float y = 0f; 
-						float z = 0.5f; 
-						brentBody.translate(x, y, z);
-						brentHead.translate(x, y, z);
-						brentLeftHand.translate(x, y, z);
-						brentRightHand.translate(x, y, z);
-						brentLeftFoot.translate(x, y, z);
-						brentRightFoot.translate(x, y, z);
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= ffMax/2) && (ffInd < (ffMax - 15))) {
-					try {
-						Thread.sleep((long) 15);
-						float x = 0f; 
-						float y = 0f; 
-						float z = -0.5f; 
-						brentBody.translate(x, y, z);
-						brentHead.translate(x, y, z);
-						brentLeftHand.translate(x, y, z);
-						brentRightHand.translate(x, y, z);
-						brentLeftFoot.translate(x, y, z);
-						brentRightFoot.translate(x, y, z);
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= (ffMax - 15)) && (ffInd < ffMax)) {
-					try {
-						Thread.sleep((long) 15);
-						brentLeftFoot.rotateX((float) Math.toRadians(-5));
-						brentRightFoot.rotateX((float) Math.toRadians(-5));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else {
-					try {
-						Thread.sleep((long) 500);
-						ffInd = 0;
-					} catch (InterruptedException e) {
-					}
-				} 
+				jumping();
 			}
 			else if (waving) {
-				if (firstStart) {
-					init();
-					init();
-					SimpleVector ce = new SimpleVector(0f, 0f, -1f);
-					SimpleVector pi = new SimpleVector(0f, 0f, (-scale/3 + 2.7f));
-					brentLeftHand.setOrigin(ce);
-					brentLeftHand.setRotationPivot(pi);
-					brentLeftHand.rotateY((float) Math.toRadians(-90));
-					firstStart = false;
-				}
-				if (ffInd < ffMax/2) {
-					try {
-						Thread.sleep((long) 30);
-						brentLeftHand.rotateY((float) Math.toRadians(5));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
-					try {
-						Thread.sleep((long) 30);
-						brentLeftHand.rotateY((float) Math.toRadians(-5));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else {
-					try {
-						Thread.sleep((long) 30);
-						ffInd = 0;
-					} catch (InterruptedException e) {
-					}
-				} 
+				waving();
 			}
 			else if (shaking) {
-				if (firstStart) {
-					init();
-					init();
-					brentHead.rotateZ((float) Math.toRadians(-12));
-					firstStart = false;
-				}
-				if (ffInd < ffMax/2) {
-					try {
-						Thread.sleep((long) 30);
-						brentHead.rotateZ((float) Math.toRadians(2));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
-					try {
-						Thread.sleep((long) 30);
-						brentHead.rotateZ((float) Math.toRadians(-2));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else {
-					try {
-						Thread.sleep((long) 30);
-						ffInd = 0;
-					} catch (InterruptedException e) {
-					}
-				} 
+				shaking();
 			}
 			else if (nodding) {
-				if (firstStart) {
-					init();
-					init();
-					SimpleVector ce = new SimpleVector(0f, 0f, 0f);
-					SimpleVector pi = new SimpleVector(0f, 0f, (2.7f + 1.4f/2));
-					brentHead.setOrigin(ce);
-					brentHead.setRotationPivot(pi);
-					brentHead.rotateX((float) Math.toRadians(-12));
-					firstStart = false;
-				}
-				if (ffInd < ffMax/2) {
-					try {
-						Thread.sleep((long) 30);
-						brentHead.rotateX((float) Math.toRadians(2));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
-					try {
-						Thread.sleep((long) 30);
-						brentHead.rotateX((float) Math.toRadians(-2));
-						ffInd = ffInd + 5;
-					} catch (InterruptedException e) {
-					}
-				}
-				else {
-					try {
-						Thread.sleep((long) 30);
-						ffInd = 0;
-					} catch (InterruptedException e) {
-					}
-				} 
+				nodding();
 			}
 			else if (stopping) {
-				if (firstStart) {
-					init();
-					init();
-					firstStart = false;
-				}
-			}
-			if (lighton) {
-				if (firstStart) {
-					init();
-					init();
-					sun2.enable();
-					sun3.enable();
-					sun4.enable();
-					sun5.enable();
-					lamp2.setVisibility(true);
-					lamp3.setVisibility(true);
-					lamp4.setVisibility(true);
-					lamp5.setVisibility(true);
-					firstStart = false;
-				}
-			}
-			else if (!lighton) {
-				if (firstStart) {
-					init();
-					init();
-					sun2.disable();
-					sun3.disable();
-					sun4.disable();
-					sun5.disable();
-					lamp2.setVisibility(false);
-					lamp3.setVisibility(false);
-					lamp4.setVisibility(false);
-					lamp5.setVisibility(false);
-					firstStart = false;
-				}
+				stopping();
 			}
 			
 			if (touchTurn != 0) {
@@ -791,6 +481,227 @@ public class OpenGLActivity extends Activity {
 			}
 			fps++;
 		}
-	}
 
+		private synchronized void walking() {
+			if (firstStart) {
+				init();
+				init();
+				brentLeftHand.rotateZ((float) Math.toRadians(30));
+				brentRightHand.rotateZ((float) Math.toRadians(30));
+				brentLeftFoot.rotateX((float) Math.toRadians(30));
+				brentRightFoot.rotateX((float) Math.toRadians(-30));
+				firstStart = false;
+			}
+			if (ffInd < ffMax/2) {
+				try {
+					Thread.sleep((long) 30);
+					brentLeftHand.rotateZ((float) Math.toRadians(-5));
+					brentRightHand.rotateZ((float) Math.toRadians(-5));
+					brentLeftFoot.rotateX((float) Math.toRadians(-5));
+					brentRightFoot.rotateX((float) Math.toRadians(5));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
+				try {
+					Thread.sleep((long) 30);
+					brentLeftHand.rotateZ((float) Math.toRadians(5));
+					brentRightHand.rotateZ((float) Math.toRadians(5));
+					brentLeftFoot.rotateX((float) Math.toRadians(5));
+					brentRightFoot.rotateX((float) Math.toRadians(-5));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else {
+				ffInd = 0;
+			} 
+		}
+
+		private synchronized void jumping() {
+			if (firstStart) {
+				init();
+				init();
+				SimpleVector ce = new SimpleVector(0f, 0f, (2.7f * -scale + 1.5f));
+				SimpleVector pi = new SimpleVector(0f, 0f, 0f);
+				brentLeftFoot.setOrigin(ce);
+				brentLeftFoot.setRotationPivot(pi);
+				brentRightFoot.setOrigin(ce);
+				brentRightFoot.setRotationPivot(pi);
+				firstStart = false;
+			}
+			if (ffInd < 11) {
+				try {
+					Thread.sleep((long) 15);
+					brentLeftFoot.rotateX((float) Math.toRadians(5));
+					brentRightFoot.rotateX((float) Math.toRadians(5));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= 11) && (ffInd < ffMax/2)) {
+				try {
+					Thread.sleep((long) 15);
+					float x = 0f; 
+					float y = 0f; 
+					float z = 0.5f; 
+					brentBody.translate(x, y, z);
+					brentHead.translate(x, y, z);
+					brentLeftHand.translate(x, y, z);
+					brentRightHand.translate(x, y, z);
+					brentLeftFoot.translate(x, y, z);
+					brentRightFoot.translate(x, y, z);
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= ffMax/2) && (ffInd < (ffMax - 15))) {
+				try {
+					Thread.sleep((long) 15);
+					float x = 0f; 
+					float y = 0f; 
+					float z = -0.5f; 
+					brentBody.translate(x, y, z);
+					brentHead.translate(x, y, z);
+					brentLeftHand.translate(x, y, z);
+					brentRightHand.translate(x, y, z);
+					brentLeftFoot.translate(x, y, z);
+					brentRightFoot.translate(x, y, z);
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= (ffMax - 15)) && (ffInd < ffMax)) {
+				try {
+					Thread.sleep((long) 15);
+					brentLeftFoot.rotateX((float) Math.toRadians(-5));
+					brentRightFoot.rotateX((float) Math.toRadians(-5));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else {
+				try {
+					Thread.sleep((long) 500);
+					ffInd = 0;
+				} catch (InterruptedException e) {
+				}
+			} 
+		}
+
+		private synchronized void waving() {
+			if (firstStart) {
+				init();
+				init();
+				SimpleVector ce = new SimpleVector(0f, 0f, -1f);
+				SimpleVector pi = new SimpleVector(0f, 0f, (-scale/3 + 2.7f));
+				brentLeftHand.setOrigin(ce);
+				brentLeftHand.setRotationPivot(pi);
+				brentLeftHand.rotateY((float) Math.toRadians(-90));
+				firstStart = false;
+			}
+			if (ffInd < ffMax/2) {
+				try {
+					Thread.sleep((long) 30);
+					brentLeftHand.rotateY((float) Math.toRadians(5));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
+				try {
+					Thread.sleep((long) 30);
+					brentLeftHand.rotateY((float) Math.toRadians(-5));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else {
+				try {
+					Thread.sleep((long) 30);
+					ffInd = 0;
+				} catch (InterruptedException e) {
+				}
+			} 
+		}
+
+		private synchronized void shaking() {
+			if (firstStart) {
+				init();
+				init();
+				brentHead.rotateZ((float) Math.toRadians(-12));
+				firstStart = false;
+			}
+			if (ffInd < ffMax/2) {
+				try {
+					Thread.sleep((long) 30);
+					brentHead.rotateZ((float) Math.toRadians(2));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
+				try {
+					Thread.sleep((long) 30);
+					brentHead.rotateZ((float) Math.toRadians(-2));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else {
+				try {
+					Thread.sleep((long) 30);
+					ffInd = 0;
+				} catch (InterruptedException e) {
+				}
+			} 
+		}
+
+		private synchronized void nodding() {
+			if (firstStart) {
+				init();
+				init();
+				SimpleVector ce = new SimpleVector(0f, 0f, 0f);
+				SimpleVector pi = new SimpleVector(0f, 0f, (2.7f + 1.4f/2));
+				brentHead.setOrigin(ce);
+				brentHead.setRotationPivot(pi);
+				brentHead.rotateX((float) Math.toRadians(-12));
+				firstStart = false;
+			}
+			if (ffInd < ffMax/2) {
+				try {
+					Thread.sleep((long) 30);
+					brentHead.rotateX((float) Math.toRadians(2));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else if ((ffInd >= ffMax/2) && (ffInd < ffMax)) {
+				try {
+					Thread.sleep((long) 30);
+					brentHead.rotateX((float) Math.toRadians(-2));
+					ffInd = ffInd + 5;
+				} catch (InterruptedException e) {
+				}
+			}
+			else {
+				try {
+					Thread.sleep((long) 30);
+					ffInd = 0;
+				} catch (InterruptedException e) {
+				}
+			} 
+		}
+
+		private synchronized void stopping() {
+			if (firstStart) {
+				init();
+				init();
+				firstStart = false;
+			}
+		}
+	
+	}
+		
 }
