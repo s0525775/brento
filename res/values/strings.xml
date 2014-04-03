@@ -1,5 +1,7 @@
 <resources>
 
     <string name="app_name">Brento</string>
-
+    <string name="app_image">image</string>
+    <string name="app_startbutton">START</string>
+    
 </resources>
