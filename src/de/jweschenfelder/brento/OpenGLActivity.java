@@ -29,6 +29,11 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
+// Apache 2.0 license
+// Author: J. Weschenfelder
+// based on jPCT-AE
+// Version: 1.0
+
 public class OpenGLActivity extends Activity {
 
 	// Used to handle pause and resume...
