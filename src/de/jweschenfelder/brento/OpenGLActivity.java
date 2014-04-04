@@ -32,7 +32,7 @@ import android.widget.TableRow;
 // Apache 2.0 license
 // Author: J. Weschenfelder
 // based on jPCT-AE
-// Version: 1.0
+// Version: 2.0
 
 public class OpenGLActivity extends Activity {
 
